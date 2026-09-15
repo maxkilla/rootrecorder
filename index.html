@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RootRecorder — Turn family stories into your family tree</title>
+<meta name="description" content="RootRecorder helps you record oral histories with the people who hold your family's memory, and turns them into sourced facts, relationships, and keepsakes for FamilySearch Family Tree.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Karla:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#EEF0EA;
+  --surface:#FFFFFF;
+  --surface-2:#E6E8DE;
+  --ink:#1C2620;
+  --ink-soft:#57635B;
+  --accent:#B5432B;
+  --accent-soft:#D9C9B8;
+  --line:#D3D3C4;
+  --rec:#C23B26;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13181A;
+    --surface:#1B2224;
+    --surface-2:#212A2C;
+    --ink:#EAEBE3;
+    --ink-soft:#9CA6A0;
+    --accent:#E2764F;
+    --accent-soft:#3A2E27;
+    --line:#2B3335;
+    --rec:#E8593C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13181A;
+  --surface:#1B2224;
+  --surface-2:#212A2C;
+  --ink:#EAEBE3;
+  --ink-soft:#9CA6A0;
+  --accent:#E2764F;
+  --accent-soft:#3A2E27;
+  --line:#2B3335;
+  --rec:#E8593C;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Karla',-apple-system,sans-serif;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;}
+[hidden]{display:none!important;}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important;}
+}
+.mono{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+.display{ font-family:'Big Shoulders',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.01em; text-wrap:balance; }
+.wrap{ max-width:1100px; margin:0 auto; padding-inline:24px; }
+a{ color:var(--accent); }
+header.top{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
+  background:var(--bg); border-bottom:1px solid var(--line);
+}
+.top-inner{
+  max-width:1100px; margin:0 auto; padding:16px 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.wordmark{
+  font-family:'Big Shoulders',sans-serif; font-weight:800; font-size:1.3rem;
+  letter-spacing:.04em; text-transform:uppercase; text-decoration:none; color:var(--ink);
+  display:flex; align-items:baseline; gap:6px;
+}
+.wordmark .dot{ color:var(--rec); }
+nav.top-links{ display:flex; gap:24px; }
+nav.top-links a{
+  font-family:'IBM Plex Mono',monospace; font-size:.78rem; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--ink-soft); text-decoration:none;
+}
+nav.top-links a:hover{ color:var(--accent); }
+@media (max-width:640px){ nav.top-links{ display:none; } }
+.hero{ padding:56px 0 64px; border-bottom:1px solid var(--line); }
+.hero-grid{
+  display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center;
+}
+@media (max-width:800px){ .hero-grid{ grid-template-columns:1fr; gap:36px; } }
+.rec-line{
+  display:inline-flex; align-items:center; gap:8px; margin-bottom:22px;
+  font-family:'IBM Plex Mono',monospace; font-size:.78rem; letter-spacing:.05em;
+  color:var(--ink-soft); text-transform:uppercase;
+}
+.rec-dot{
+  width:8px; height:8px; border-radius:50%; background:var(--rec); flex:none;
+  animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+h1.display{
+  font-size:clamp(2.6rem,6vw,4.4rem); line-height:.98; margin:0 0 20px; color:var(--ink);
+}
+h1.display .accent-word{ color:var(--accent); }
+.hero p.lede{
+  font-size:1.15rem; color:var(--ink-soft); max-width:480px; margin:0 0 30px;
+}
+.cta-row{ display:flex; gap:14px; flex-wrap:wrap; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:13px 24px;
+  font-family:'IBM Plex Mono',monospace; font-size:.82rem; text-transform:uppercase;
+  letter-spacing:.05em; text-decoration:none; border-radius:2px; border:1px solid transparent;
+}
+.btn-primary{ background:var(--ink); color:var(--bg); }
+.btn-primary:hover{ background:var(--accent); }
+.btn-ghost{ border-color:var(--line); color:var(--ink); }
+.btn-ghost:hover{ border-color:var(--ink); }
+.tape{
+  background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:24px;
+}
+.tape-head{
+  display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace;
+  font-size:.72rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em;
+  margin-bottom:14px;
+}
+.wave{ display:flex; align-items:center; gap:3px; height:90px; }
+.wave i{
+  display:block; flex:1; background:var(--accent-soft); border-radius:1px;
+}
+.wave i.hot{ background:var(--accent); }
+.tape-foot{
+  display:flex; justify-content:space-between; margin-top:14px;
+  font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-soft);
+}
+section{ padding:60px 0; border-bottom:1px solid var(--line); }
+section.tight{ padding:44px 0; }
+.kicker{
+  font-family:'IBM Plex Mono',monospace; font-size:.76rem; letter-spacing:.08em;
+  color:var(--accent); text-transform:uppercase; display:block; margin-bottom:10px;
+}
+h2.display{ font-size:clamp(1.7rem,3.4vw,2.5rem); margin:0 0 14px; color:var(--ink); max-width:640px; }
+.section-sub{ color:var(--ink-soft); max-width:560px; margin:0 0 40px; }
+.statement{
+  border-left:3px solid var(--accent); padding-left:26px; max-width:700px;
+}
+.statement p{ font-size:1.25rem; color:var(--ink); margin:0; }
+.statement p .soft{ color:var(--ink-soft); }
+.steps{ display:flex; flex-direction:column; }
+.step-row{
+  display:grid; grid-template-columns:110px 1fr; gap:24px; padding:22px 0;
+  border-top:1px solid var(--line);
+}
+.step-row:last-child{ border-bottom:1px solid var(--line); }
+.step-tag{
+  font-family:'IBM Plex Mono',monospace; font-size:.8rem; color:var(--accent);
+  letter-spacing:.04em; padding-top:2px;
+}
+.step-body h3{ margin:0 0 6px; font-size:1.15rem; font-family:'Karla',sans-serif; font-weight:700; }
+.step-body p{ margin:0; color:var(--ink-soft); max-width:560px; }
+.cards2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:700px){ .cards2{ grid-template-columns:1fr; } }
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:3px; padding:26px;
+  position:relative;
+}
+.card .tab{
+  font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--ink-soft); display:block; margin-bottom:12px;
+}
+.card.us{ border-color:var(--accent); }
+.card.us .tab{ color:var(--accent); }
+.card h3{ margin:0 0 10px; font-size:1.05rem; font-family:'Karla',sans-serif; font-weight:700; }
+.card p{ margin:0; color:var(--ink-soft); font-size:.97rem; }
+.affidavit{
+  background:var(--surface); border:1px solid var(--line); border-radius:3px;
+  padding:32px 36px; max-width:720px;
+}
+.affidavit h3{ margin:0 0 18px; font-family:'Karla',sans-serif; font-size:1.1rem; }
+.affidavit ul{ list-style:none; margin:0; padding:0; }
+.affidavit li{
+  display:flex; gap:12px; padding:12px 0; border-top:1px solid var(--line); color:var(--ink-soft);
+}
+.affidavit li:first-of-type{ border-top:none; }
+.affidavit li .mark{
+  flex:none; width:18px; height:18px; border:1px solid var(--accent); color:var(--accent);
+  font-family:'IBM Plex Mono',monospace; font-size:.7rem; display:flex; align-items:center;
+  justify-content:center; margin-top:2px;
+}
+.faq{ max-width:700px; }
+.faq-item{ padding:20px 0; border-top:1px solid var(--line); }
+.faq-item:first-child{ border-top:none; padding-top:0; }
+.faq-item h3{ margin:0 0 8px; font-family:'Karla',sans-serif; font-size:1.03rem; }
+.faq-item p{ margin:0; color:var(--ink-soft); }
+.contact-box{
+  background:var(--surface-2); border-radius:4px; padding:44px 40px; text-align:left;
+  display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap;
+}
+.contact-box .txt h2{ margin:0 0 8px; }
+.contact-box .txt p{ margin:0; color:var(--ink-soft); max-width:440px; }
+footer{
+  padding:28px 0 calc(28px + env(safe-area-inset-bottom,0px));
+  font-family:'IBM Plex Mono',monospace; font-size:.76rem; color:var(--ink-soft);
+}
+footer .wrap{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="wordmark" href="#top">ROOT<span class="dot">·</span>RECORDER</a>
+    <nav class="top-links">
+      <a href="#how">How it works</a>
+      <a href="#why">Why</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="rec-line"><span class="rec-dot"></span> REC · APPLYING FOR FAMILYSEARCH API ACCESS</span>
+        <h1 class="display">Every story<br>they tell is a<br><span class="accent-word">record</span> waiting<br>to be kept.</h1>
+        <p class="lede">RootRecorder guides a recorded conversation with a parent or grandparent, then turns what they say into sourced facts, relationships, and memories on FamilySearch Family Tree — reviewed and approved by you before anything is filed.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#contact">Get notified at launch</a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+      </div>
+      <div class="tape">
+        <div class="tape-head"><span>TRACK 01 · INTERVIEW</span><span>04:12</span></div>
+        <div class="wave" id="wave"></div>
+        <div class="tape-foot"><span>GRANDMOTHER · BIRTHPLACE</span><span>REC ●</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="tight">
+    <div class="wrap">
+      <div class="statement">
+        <p>Every year, stories disappear with the people who lived them. <span class="soft">A village no one wrote down. A maiden name only she remembered. The real reason the family moved.</span> Once it's gone, no record replaces it.</p>
+      </div>
+    </div>
+  </section>
+  <section id="how">
+    <div class="wrap">
+      <span class="kicker">How it works</span>
+      <h2 class="display">Four steps, tape to tree</h2>
+      <p class="section-sub">Every step stays in your hands. Nothing reaches FamilySearch without your review.</p>
+      <div class="steps">
+        <div class="step-row">
+          <div class="step-tag">STEP 01</div>
+          <div class="step-body">
+            <h3>Record</h3>
+            <p>Sit down with a parent or grandparent and record a guided conversation, built around real life events — birth, marriage, migration, career.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-tag">STEP 02</div>
+          <div class="step-body">
+            <h3>Transcribe &amp; extract</h3>
+            <p>RootRecorder transcribes the recording and drafts candidate facts: names, relationships, dates, places, and events mentioned along the way.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-tag">STEP 03</div>
+          <div class="step-body">
+            <h3>Review &amp; approve</h3>
+            <p>You see every extracted fact before anything happens. Edit, correct, or discard — you decide what's accurate and what's ready to keep.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-tag">STEP 04</div>
+          <div class="step-body">
+            <h3>File to FamilySearch</h3>
+            <p>Approved facts, relationships, and the recording itself are added to the person's profile in Family Tree as sourced, citable content.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="why">
+    <div class="wrap">
+      <span class="kicker">Why RootRecorder</span>
+      <h2 class="display">Most apps stop at the recording</h2>
+      <p class="section-sub">Legacy-capture tools make a beautiful keepsake. RootRecorder makes that keepsake part of the record.</p>
+      <div class="cards2">
+        <div class="card">
+          <span class="tab">Typical legacy-capture app</span>
+          <h3>A private audio file</h3>
+          <p>Records a conversation and produces a polished keepsake — disconnected from any family tree or shared record. No one else can build on it.</p>
+        </div>
+        <div class="card us">
+          <span class="tab">RootRecorder</span>
+          <h3>A sourced family record</h3>
+          <p>Records the same conversation, but structures it into tree-ready facts and citations — approved by you — so it becomes part of the family's shared record.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="tight">
+    <div class="wrap">
+      <span class="kicker">Trust &amp; transparency</span>
+      <h2 class="display">AI drafts. You decide.</h2>
+      <div class="affidavit">
+        <h3>How we use AI, plainly</h3>
+        <ul>
+          <li><span class="mark">01</span> AI transcribes recordings and drafts candidate facts — it never submits anything on its own.</li>
+          <li><span class="mark">02</span> Every fact, relationship, and citation is reviewed and explicitly approved by you before it touches FamilySearch.</li>
+          <li><span class="mark">03</span> The original recording is kept as the source citation behind every fact it produced.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section id="faq">
+    <div class="wrap">
+      <span class="kicker">FAQ</span>
+      <h2 class="display">Common questions</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <h3>Is RootRecorder affiliated with FamilySearch?</h3>
+          <p>Not yet — we've applied to become a qualified FamilySearch Third-party Solution Provider, which allows approved apps to read and write Family Tree data. We'll update this page as that moves forward.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do I need a FamilySearch account?</h3>
+          <p>Yes. RootRecorder writes to your existing FamilySearch Family Tree — it doesn't replace it or require a separate tree.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What happens to the original recordings?</h3>
+          <p>They're kept and attached to the relevant person's profile as a source citation and memory, so every fact they produced traces back to the conversation.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Who's building this?</h3>
+          <p>RootRecorder is a project of CleverGhosts LLC, based in Lake County, California.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="contact" style="border-bottom:none;">
+    <div class="wrap">
+      <div class="contact-box">
+        <div class="txt">
+          <h2 class="display" style="font-size:1.6rem;">Want in on the first sessions?</h2>
+          <p>We're building toward an early beta. Reach out and we'll keep you posted.</p>
+        </div>
+        <a class="btn btn-primary" href="mailto:maxkillahertz@gmail.com?subject=RootRecorder%20early%20access">Contact us</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap">
+    <span>ROOTRECORDER — A CLEVERGHOSTS LLC PROJECT</span>
+    <span>LAKE COUNTY, CALIFORNIA · 2026</span>
+  </div>
+</footer>
+<script>
+(function(){
+  var heights = [14,22,18,34,46,30,20,16,28,44,58,40,24,18,32,50,66,48,28,20,16,26,42,54,36,22,14,20,30,20,14,18,26,38,46,32,20,16,22,34,44,28,18,14,20,30,42,56,38,22,16,20,28,20,14,18,24,16,12,10];
+  var wave = document.getElementById('wave');
+  if(wave){
+    heights.forEach(function(h, i){
+      var bar = document.createElement('i');
+      bar.style.height = h + '%';
+      if(i % 5 === 0) bar.className = 'hot';
+      wave.appendChild(bar);
+    });
+  }
+})();
+</script>
+</body>
+</html>
