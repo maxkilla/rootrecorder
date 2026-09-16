@@ -88,16 +88,6 @@ nav.top-links a:hover{ color:var(--accent); }
   display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center;
 }
 @media (max-width:800px){ .hero-grid{ grid-template-columns:1fr; gap:36px; } }
-.rec-line{
-  display:inline-flex; align-items:center; gap:8px; margin-bottom:22px;
-  font-family:'IBM Plex Mono',monospace; font-size:.78rem; letter-spacing:.05em;
-  color:var(--ink-soft); text-transform:uppercase;
-}
-.rec-dot{
-  width:8px; height:8px; border-radius:50%; background:var(--rec); flex:none;
-  animation:pulse 1.8s ease-in-out infinite;
-}
-@keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
 h1.display{
   font-size:clamp(2.6rem,6vw,4.4rem); line-height:.98; margin:0 0 20px; color:var(--ink);
 }
@@ -220,7 +210,6 @@ footer .wrap{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:8
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="rec-line"><span class="rec-dot"></span> REC · APPLYING FOR FAMILYSEARCH API ACCESS</span>
         <h1 class="display">Every story<br>they tell is a<br><span class="accent-word">record</span> waiting<br>to be kept.</h1>
         <p class="lede">RootRecorder guides a recorded conversation with a parent or grandparent, then turns what they say into sourced facts, relationships, and memories on FamilySearch Family Tree — reviewed and approved by you before anything is filed.</p>
         <div class="cta-row">
