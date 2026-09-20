@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard — RootRecorder</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Karla:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#EEF0EA;
+  --surface:#FFFFFF;
+  --surface-2:#E6E8DE;
+  --ink:#1C2620;
+  --ink-soft:#57635B;
+  --accent:#B5432B;
+  --accent-soft:#D9C9B8;
+  --line:#D3D3C4;
+  --rec:#C23B26;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13181A; --surface:#1B2224; --surface-2:#212A2C; --ink:#EAEBE3;
+    --ink-soft:#9CA6A0; --accent:#E2764F; --accent-soft:#3A2E27; --line:#2B3335; --rec:#E8593C;
+  }
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg); color:var(--ink); font-family:'Karla',-apple-system,sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh;
+}
+.wrap{ max-width:720px; margin:0 auto; padding-inline:24px; }
+a{ color:var(--accent); }
+header.top{
+  background:var(--bg); border-bottom:1px solid var(--line);
+}
+.top-inner{
+  max-width:720px; margin:0 auto; padding:16px 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.wordmark{
+  font-family:'Big Shoulders',sans-serif; font-weight:800; font-size:1.3rem;
+  letter-spacing:.04em; text-transform:uppercase; text-decoration:none; color:var(--ink);
+  display:flex; align-items:baseline; gap:6px;
+}
+.wordmark .dot{ color:var(--rec); }
+.display{ font-family:'Big Shoulders',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.01em; }
+.mono{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+main{ padding:64px 0; }
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:40px;
+  text-align:center;
+}
+.card h1{ font-size:1.8rem; margin:0 0 12px; }
+.card p{ color:var(--ink-soft); max-width:440px; margin:0 auto 28px; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:13px 24px;
+  font-family:'IBM Plex Mono',monospace; font-size:.82rem; text-transform:uppercase;
+  letter-spacing:.05em; text-decoration:none; border-radius:2px; border:1px solid transparent;
+}
+.btn-primary{ background:var(--ink); color:var(--bg); }
+.btn-primary:hover{ background:var(--accent); }
+.btn-ghost{ border-color:var(--line); color:var(--ink); }
+.btn-ghost:hover{ border-color:var(--ink); }
+.status-line{
+  display:inline-flex; align-items:center; gap:8px; margin-bottom:22px;
+  font-family:'IBM Plex Mono',monospace; font-size:.78rem; letter-spacing:.05em;
+  color:var(--ink-soft); text-transform:uppercase;
+}
+.status-dot{ width:8px; height:8px; border-radius:50%; background:var(--rec); flex:none; }
+.status-dot.on{ background:#4a8a5c; }
+.sessions{ margin-top:40px; text-align:left; }
+.sessions h2{ font-size:1.05rem; margin:0 0 12px; font-family:'Karla',sans-serif; }
+.empty{
+  border:1px dashed var(--line); border-radius:3px; padding:28px; text-align:center;
+  color:var(--ink-soft); font-size:.95rem;
+}
+.top-actions a{
+  font-family:'IBM Plex Mono',monospace; font-size:.78rem; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--ink-soft); text-decoration:none;
+}
+[hidden]{ display:none !important; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="wordmark" href="/">ROOT<span class="dot">·</span>RECORDER</a>
+    <div class="top-actions">
+      <a href="/api/logout" id="logoutLink" hidden>Disconnect</a>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+
+    <div id="loadingState" class="card">
+      <p class="mono" style="margin:0;">Checking your connection&hellip;</p>
+    </div>
+
+    <div id="signedOutState" class="card" hidden>
+      <span class="status-line"><span class="status-dot"></span> NOT CONNECTED</span>
+      <h1 class="display">Connect FamilySearch</h1>
+      <p>Sign in with your FamilySearch account so RootRecorder can file approved facts, relationships, and memories to your Family Tree.</p>
+      <a class="btn btn-primary" href="/api/auth/familysearch/login">Connect FamilySearch account</a>
+    </div>
+
+    <div id="signedInState" class="card" hidden>
+      <span class="status-line"><span class="status-dot on"></span> CONNECTED</span>
+      <h1 class="display">Your dashboard</h1>
+      <p>Your FamilySearch account is connected. Recording, transcription, and review aren't built yet &mdash; this is the shell they'll land in.</p>
+      <a class="btn btn-ghost" href="/">Back to RootRecorder</a>
+
+      <div class="sessions">
+        <h2>Sessions</h2>
+        <div class="empty mono">No sessions yet. Recording isn't live here yet.</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+<script>
+(function(){
+  fetch('/api/session', { credentials: 'same-origin' })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      document.getElementById('loadingState').hidden = true;
+      if (data && data.authenticated) {
+        document.getElementById('signedInState').hidden = false;
+        document.getElementById('logoutLink').hidden = false;
+      } else {
+        document.getElementById('signedOutState').hidden = false;
+      }
+    })
+    .catch(function(){
+      document.getElementById('loadingState').hidden = true;
+      document.getElementById('signedOutState').hidden = false;
+    });
+})();
+</script>
+</body>
+</html>
